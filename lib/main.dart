@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const QrMaker());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class QrMaker extends StatelessWidget {
+  const QrMaker({super.key});
 
   // This widget is the root of your application.
   @override

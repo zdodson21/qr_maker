@@ -1,4 +1,4 @@
-# qr_maker
+# QR-Maker
 
 A new Flutter project.
 
