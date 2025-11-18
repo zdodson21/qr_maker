@@ -30,8 +30,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // QR Code Generation
   String qrData = '';
-  bool isGapless = false; // TODO not setting currently, might be a scope issue, check demo to see how this thing is done there.
+  bool overCharLimit = false;
+
+  // Image Selection
+  // TODO will need to use a file select tool.
+
+  // Options
+  bool isGapless = true;
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +48,57 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             QrImageView(
-              data: 'Test',
+              data: qrData,
               version: QrVersions.auto,
               size: 320,
               gapless: isGapless,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              
+              errorStateBuilder: (cxt, err) {
+                return Center(
+                  child: Text(
+                    'Something went wrong :(',
+                    textAlign: TextAlign.center,
+                  )
+                );
+              },
             ),
 
-            const TextField(
+            TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Enter text to generate a QR Code'
+                hintText: 'Enter text to generate a QR Code',
               ),
+
+              onChanged: (String text) {
+                if (text.length < 2330) { // 
+                  setState(() {
+                    overCharLimit = false;
+                    qrData = text;
+                  });
+                } else {
+                  setState(() {
+                    overCharLimit = true;
+                  });
+                }
+              },
             ),
-            // Add Checkbox here for gapless
+
+            CheckboxListTile(
+              title: Text("Gapless"),
+              value: isGapless, 
+              selected: isGapless,
+              dense: true,
+              controlAffinity: ListTileControlAffinity.leading,
+
+              onChanged: (bool? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    isGapless = newValue;
+                  });
+                }
+              },
+            )
           ],
         ),
       ),

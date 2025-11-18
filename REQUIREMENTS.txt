@@ -6,3 +6,4 @@ The following requirements must be met:
 * Additional settings should be available (such as 'gapless'), changing settings should update QR code.
 * User must be able to generate QR Code, insert an image, and download the QR code on all testable platforms (Linux, Windows, Android)
 * Must display error state when applicable
+* Should set colors based on light and dark mode.
