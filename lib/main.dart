@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
-// https://pub.dev/packages/file_selector
+// https://pub.dev/packages/file_picker
 
 void main() {
   runApp(const QrMaker());

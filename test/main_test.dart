@@ -12,6 +12,7 @@ import 'package:qr_maker/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // TODO write tests
     // Build our app and trigger a frame.
     await tester.pumpWidget(const QrMaker());
 
