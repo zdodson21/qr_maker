@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
+// https://pub.dev/packages/file_selector
 
 void main() {
   runApp(const QrMaker());
@@ -35,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool overCharLimit = false;
 
   // Image Selection
-  // TODO will need to use a file select tool.
+  final String? imgDirectory = '';
 
   // Options
   bool isGapless = true;
