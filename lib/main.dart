@@ -11,7 +11,7 @@ class QrMaker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'QR Maker',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
               size: 320,
               gapless: isGapless,
             ),
-            
+
             const TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
