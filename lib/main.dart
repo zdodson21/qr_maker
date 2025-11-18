@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool overCharLimit = false;
 
   // Image Selection
-  final String? imgDirectory = '';
+  String? imgDirectory = '';
 
   // Options
   bool isGapless = true;
@@ -99,6 +99,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 }
               },
+            ),
+
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+
+                  },
+
+                  child: Text('Select Image'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      imgDirectory = '';
+                    });
+                  },
+
+                  child: Text('Clear Image')
+                )
+              ],
             )
           ],
         ),
