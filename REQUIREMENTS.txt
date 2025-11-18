@@ -1,0 +1,8 @@
+The following requirements must be met:
+
+* QR Code generates each time string is updated in a text field is pressed (unless causes lag).
+* User can select an image to place in the middle of the QR code, with settings as supported by package.
+* QR Code version should be set to automatic
+* Additional settings should be available (such as 'gapless'), changing settings should update QR code.
+* User must be able to generate QR Code, insert an image, and download the QR code on all testable platforms (Linux, Windows, Android)
+* Must display error state when applicable
