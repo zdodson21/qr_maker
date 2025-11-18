@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
               version: QrVersions.auto,
               size: 320,
               gapless: isGapless,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              errorCorrectionLevel: QrErrorCorrectLevel.H,
               
               errorStateBuilder: (cxt, err) {
                 return Center(
