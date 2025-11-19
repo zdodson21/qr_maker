@@ -41,6 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Options
   bool isGapless = true;
+  bool useCornerCircles = false;
+  bool useDataCircles = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +52,25 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             QrImageView(
+              // Data
               data: qrData,
               version: QrVersions.auto,
-              size: 320,
-              gapless: isGapless,
               errorCorrectionLevel: QrErrorCorrectLevel.H,
               embeddedImage: FileImage(File(imgDirectory)),
+              semanticsLabel: 'Q R code for: $qrData',
+
+              // Styles
+              size: 320,
+              gapless: isGapless,
+              backgroundColor: Colors.white,
+              eyeStyle: QrEyeStyle(
+                color: Colors.black,
+                eyeShape: useCornerCircles ? QrEyeShape.circle : QrEyeShape.square,
+              ),
+              dataModuleStyle: QrDataModuleStyle(
+                color: Colors.black,
+                dataModuleShape: useDataCircles ? QrDataModuleShape.circle : QrDataModuleShape.square
+              ),
             ),
 
             TextField(
@@ -77,21 +92,57 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
               },
             ),
+            
+            Column(
+              children: [
+                CheckboxListTile(
+                  title: Text("Gapless"),
+                  value: isGapless, 
+                  selected: isGapless,
+                  dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
 
-            CheckboxListTile(
-              title: Text("Gapless"),
-              value: isGapless, 
-              selected: isGapless,
-              dense: true,
-              controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (bool? checked) {
+                    if (checked != null) {
+                      setState(() {
+                        isGapless = checked;
+                      });
+                    }
+                  },
+                ),
 
-              onChanged: (bool? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    isGapless = newValue;
-                  });
-                }
-              },
+                CheckboxListTile(
+                  title: Text("Use circles at corners"),
+                  value: useCornerCircles,
+                  selected: useCornerCircles,
+                  dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
+
+                  onChanged:(bool? checked) {
+                    if (checked != null) {
+                      setState(() {
+                        useCornerCircles = checked;
+                      });
+                    }
+                  },
+                ),
+
+                CheckboxListTile(
+                  title: Text("Use circles for data"),
+                  value: useDataCircles, 
+                  selected: useCornerCircles,
+                  dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
+
+                  onChanged: (bool? checked) {
+                    if (checked != null) {
+                      setState(() {
+                        useDataCircles = checked;
+                      });
+                    }
+                  }
+                ),
+              ]
             ),
 
             Row(

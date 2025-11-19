@@ -1,7 +1,5 @@
 The following requirements must be met:
 
-* User can select an image to place in the middle of the QR code, with settings as supported by package.
-* Additional settings should be available (such as 'gapless'), changing settings should update QR code.
 * User must be able to generate QR Code, insert an image, and download the QR code on all testable platforms (Linux, Windows, Android, maybe Web?)
 * Must display error state when applicable (show message when over character limit, block input or else app crashes lol).
 * Should set colors based on light and dark mode.
