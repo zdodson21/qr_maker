@@ -1,6 +1,7 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
-// https://pub.dev/packages/file_picker
 
 void main() {
   runApp(const QrMaker());
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool overCharLimit = false;
 
   // Image Selection
-  String? imgDirectory = '';
+  String imgDirectory = '';
 
   // Options
   bool isGapless = true;
@@ -54,15 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
               size: 320,
               gapless: isGapless,
               errorCorrectionLevel: QrErrorCorrectLevel.H,
-              
-              errorStateBuilder: (cxt, err) {
-                return Center(
-                  child: Text(
-                    'Something went wrong :(',
-                    textAlign: TextAlign.center,
-                  )
-                );
-              },
+              embeddedImage: FileImage(File(imgDirectory)),
             ),
 
             TextField(
@@ -104,8 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               children: [
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
 
+                    if (result != null) {
+                      setState(() {
+                        imgDirectory = result.files.single.path!;
+                      });
+                    }
                   },
 
                   child: Text('Select Image'),
