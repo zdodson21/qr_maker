@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
+import 'package:screenshot/screenshot.dart'; // https://pub.dev/packages/screenshot/install
 
 void main() {
   runApp(const QrMaker());
@@ -42,6 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool useCornerCircles = false;
   bool useDataCircles = false;
 
+  ScreenshotController screenshotController = ScreenshotController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,27 +53,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            QrImageView(
-              // Data
-              data: qrData,
-              version: QrVersions.auto,
-              errorCorrectionLevel: QrErrorCorrectLevel.H,
-              embeddedImage: FileImage(File(imgDirectory)),
-              semanticsLabel: 'Q R code for: $qrData',
+            Screenshot(
+              controller: screenshotController,
+              
+              child: 
+                QrImageView(
+                  // Data
+                  data: qrData,
+                  version: QrVersions.auto,
+                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                  embeddedImage: FileImage(File(imgDirectory)),
+                  semanticsLabel: 'Q R code for: $qrData',
 
-              // Styles
-              size: 320,
-              gapless: isGapless,
-              backgroundColor: Colors.white,
-              eyeStyle: QrEyeStyle(
-                color: Colors.black,
-                eyeShape: useCornerCircles ? QrEyeShape.circle : QrEyeShape.square,
-              ),
-              dataModuleStyle: QrDataModuleStyle(
-                color: Colors.black,
-                dataModuleShape: useDataCircles ? QrDataModuleShape.circle : QrDataModuleShape.square
-              ),
+                  // Styles
+                  size: 320,
+                  gapless: isGapless,
+                  backgroundColor: Colors.white,
+                  eyeStyle: QrEyeStyle(
+                    color: Colors.black,
+                    eyeShape: useCornerCircles ? QrEyeShape.circle : QrEyeShape.square,
+                  ),
+                  dataModuleStyle: QrDataModuleStyle(
+                    color: Colors.black,
+                    dataModuleShape: useDataCircles ? QrDataModuleShape.circle : QrDataModuleShape.square
+                  ),
+                ), 
             ),
+            
 
             TextField(
               decoration: InputDecoration(
@@ -144,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             Row( // Image Buttons
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   child: Text('Select Image'),
@@ -174,8 +185,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               child: Text('Save QR Code as Image'),
 
-              onPressed: () {
+              onPressed: () async {
+                final String? downloads = (await getDownloadsDirectory())?.path;
+                // TODO modify fileName to be QRMaker-mm-dd-yyyy-hr:min:se.png
+                String fileName = DateTime.now().microsecondsSinceEpoch.toString();
+                String path = '$downloads';
 
+                // TODO wrap in try catch and add small popup to display whether save was successful or now
+                screenshotController.captureAndSave(
+                  path,
+                  fileName: '$fileName.png'
+                );
               }, 
             ),
           ],
