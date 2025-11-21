@@ -17,15 +17,13 @@ class QrMaker extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'QR Code Maker'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -76,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
             TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Enter text to generate a QR Code',
+                hintText: 'Enter Text to Generate a QR Code',
               ),
 
               onChanged: (String text) {
@@ -93,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             
-            Column(
+            Column( // Configuration Checkboxes
               children: [
                 CheckboxListTile(
                   title: Text("Gapless"),
@@ -112,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
                 CheckboxListTile(
-                  title: Text("Use circles at corners"),
+                  title: Text("Use Circles at Corners"),
                   value: useCornerCircles,
                   selected: useCornerCircles,
                   dense: true,
@@ -128,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
                 CheckboxListTile(
-                  title: Text("Use circles for data"),
+                  title: Text("Use Circles for Data"),
                   value: useDataCircles, 
                   selected: useCornerCircles,
                   dense: true,
@@ -145,9 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ]
             ),
 
-            Row(
+            Row( // Image Buttons
               children: [
                 ElevatedButton(
+                  child: Text('Select Image'),
+
                   onPressed: () async {
                     final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
 
@@ -157,20 +157,27 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     }
                   },
-
-                  child: Text('Select Image'),
                 ),
+
                 ElevatedButton(
+                  child: Text('Clear Image'),
+                  
                   onPressed: () {
                     setState(() {
                       imgDirectory = '';
                     });
                   },
-
-                  child: Text('Clear Image')
                 )
               ],
-            )
+            ),
+
+            ElevatedButton(
+              child: Text('Save QR Code as Image'),
+
+              onPressed: () {
+
+              }, 
+            ),
           ],
         ),
       ),
