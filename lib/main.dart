@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
@@ -182,29 +183,30 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
 
-            ElevatedButton(
-              child: Text('Save QR Code as Image'),
+            if (!kIsWeb) // TODO needs tested
+              ElevatedButton(
+                child: Text('Save QR Code as Image'),
 
-              onPressed: () async {
-                final String? downloads = (await getDownloadsDirectory())?.path;
-                String path = '$downloads';
+                onPressed: () async {
+                  final String? downloads = (await getDownloadsDirectory())?.path;
+                  String path = '$downloads';
 
-                DateTime now = DateTime.now();
-                int day = now.day;
-                int month = now.month;
-                int year = now.year;
+                  DateTime now = DateTime.now();
+                  int day = now.day;
+                  int month = now.month;
+                  int year = now.year;
 
-                int seconds = now.second;
-                int minutes = now.minute;
-                int hour = now.hour;
+                  int seconds = now.second;
+                  int minutes = now.minute;
+                  int hour = now.hour;
 
-                // TODO wrap in try catch and add small popup to display whether save was successful or now
-                screenshotController.captureAndSave(
-                  path,
-                  fileName: 'QRMaker-$month-$day-$year-$hour:$minutes:$seconds.png'
-                );
-              }, 
-            ),
+                  // TODO wrap in try catch and add small popup to display whether save was successful or now
+                  screenshotController.captureAndSave(
+                    path,
+                    fileName: 'QRMaker-$month-$day-$year-$hour:$minutes:$seconds.png'
+                  );
+                }, 
+              ),
           ],
         ),
       ),
