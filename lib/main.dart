@@ -187,14 +187,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
               onPressed: () async {
                 final String? downloads = (await getDownloadsDirectory())?.path;
-                // TODO modify fileName to be QRMaker-mm-dd-yyyy-hr:min:se.png
-                String fileName = DateTime.now().microsecondsSinceEpoch.toString();
                 String path = '$downloads';
+
+                DateTime now = DateTime.now();
+                int day = now.day;
+                int month = now.month;
+                int year = now.year;
+
+                int seconds = now.second;
+                int minutes = now.minute;
+                int hour = now.hour;
 
                 // TODO wrap in try catch and add small popup to display whether save was successful or now
                 screenshotController.captureAndSave(
                   path,
-                  fileName: '$fileName.png'
+                  fileName: 'QRMaker-$month-$day-$year-$hour:$minutes:$seconds.png'
                 );
               }, 
             ),
