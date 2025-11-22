@@ -183,28 +183,30 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
 
-            if (!kIsWeb) // TODO needs tested
+            if (!kIsWeb)
               ElevatedButton(
                 child: Text('Save QR Code as Image'),
 
                 onPressed: () async {
-                  final String? downloads = (await getDownloadsDirectory())?.path;
-                  String path = '$downloads';
+                  try {
+                    final String? downloads = (await getDownloadsDirectory())?.path;
+                    String path = '$downloads';
 
-                  DateTime now = DateTime.now();
-                  int day = now.day;
-                  int month = now.month;
-                  int year = now.year;
+                    DateTime now = DateTime.now();
 
-                  int seconds = now.second;
-                  int minutes = now.minute;
-                  int hour = now.hour;
+                    await screenshotController.captureAndSave(
+                      path,
+                      fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
+                    );
 
-                  // TODO wrap in try catch and add small popup to display whether save was successful or now
-                  screenshotController.captureAndSave(
-                    path,
-                    fileName: 'QRMaker-$month-$day-$year-$hour:$minutes:$seconds.png'
-                  );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("QR Code saved successfully!")),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Failed to save QR code: $e"))
+                    );
+                  }
                 }, 
               ),
           ],
