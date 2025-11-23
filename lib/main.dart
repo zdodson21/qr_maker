@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
             TextField(
               controller: _controller,
               decoration: InputDecoration(
+                label: Text("QR Code Data Field"),
                 border: OutlineInputBorder(),
                 hintText: 'Enter Text to Generate a QR Code',
                 suffixIcon: IconButton(
