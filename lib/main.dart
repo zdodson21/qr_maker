@@ -45,7 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
   bool useCornerCircles = false;
   bool useDataCircles = false;
 
+  // Controllers 
   ScreenshotController screenshotController = ScreenshotController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +85,20 @@ class _MyHomePageState extends State<MyHomePage> {
             
 
             TextField(
+              controller: _controller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter Text to Generate a QR Code',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _controller.clear();
+
+                    setState(() {
+                      qrData = '';
+                    });
+                  },
+                )
               ),
 
               onChanged: (String text) {
@@ -183,39 +196,39 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!kIsWeb)
-                    ElevatedButton(
-                    child: Text('Save QR Code as Image'),
-                  
-                    onPressed: () async {
-                      try {
-                        final String? downloads = (await getDownloadsDirectory())?.path;
-                        String path = '$downloads';
-                  
-                        DateTime now = DateTime.now();
-                  
-                        await screenshotController.captureAndSave(
-                          path,
-                          fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
-                        );
-                  
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("QR Code saved successfully!")),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Failed to save QR code: $e"))
-                        );
-                      }
-                    }, 
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!kIsWeb)
+                  ElevatedButton(
+                  child: Text('Save QR Code as Image'),
+                
+                  onPressed: () async {
+                    try {
+                      final String? downloads = (await getDownloadsDirectory())?.path;
+                      String path = '$downloads';
+                
+                      DateTime now = DateTime.now();
+                
+                      await screenshotController.captureAndSave(
+                        path,
+                        fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
+                      );
+                
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("QR Code saved successfully!")),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Failed to save QR code: $e"))
+                      );
+                    }
+                  }, 
+                ),
 
-                  // TODO add button for saving QRcode text to a list (list has to save on device).
-                ],
-              ),
+                // TODO add button for saving QRcode text to a list (list has to save on device).
+              ],
+            ),
           ],
         ),
       ),
