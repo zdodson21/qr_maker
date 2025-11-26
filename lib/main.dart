@@ -18,8 +18,12 @@ class QrMaker extends StatelessWidget {
     return MaterialApp(
       title: 'QR Maker',
       theme: ThemeData(
+        // TODO colors should be set based on device's light / dark mode setting
+        // https://medium.com/@vignesh7056/implementing-light-dark-and-auto-themes-in-flutter-a-complete-cross-platform-guide-7f96a307d4d6
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const MyHomePage(),
     );
   }
@@ -56,6 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // TODO DropdownMenu here, creates entries for any saved qr code links. Should be able to delete
+            
             Screenshot(
               controller: screenshotController,
               
@@ -85,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             
 
             TextField(
+              // TODO see if I can add a drop down to this text field
               controller: _controller,
               decoration: InputDecoration(
                 label: Text("QR Code Data Field"),
