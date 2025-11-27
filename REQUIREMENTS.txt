@@ -1,6 +1,0 @@
-The following requirements must be met:
-
-* User must be able to generate QR Code, insert an image, and download the QR code on all testable platforms (Linux, Windows, Android, maybe Web?)
-* Must display error state when applicable (show message when over character limit, block input or else app crashes lol).
-* Should set colors based on light and dark mode.
-* Try to avoid scope creep lol, but I could make it so users can save their qr codes in a menu, then they can select a QR code to display.

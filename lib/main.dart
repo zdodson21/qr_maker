@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'; // https://pub.dev/packages/path_provider
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
@@ -242,20 +241,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 
                   onPressed: () async {
                     try {
+                      DateTime now = DateTime.now();
+                      String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
+                      
+                      // TODO this is not working right for Android, so I should just let the user choose where it saves to instead. Will have to test on Windows
                       final String? downloads = (await getDownloadsDirectory())?.path;
                       String path = '$downloads';
-                
-                      DateTime now = DateTime.now();
-                      
-                      if (!kIsWeb) {
-                        await screenshotController.captureAndSave(
-                          path,
-                          fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
-                        );
-                      }
+
+                      await screenshotController.captureAndSave(
+                        path,
+                        fileName: fileName
+                      );
                 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("QR Code saved successfully!")),
+                        SnackBar(content: Text("QR Code saved to $path successfully!")),
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
