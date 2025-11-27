@@ -244,17 +244,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       DateTime now = DateTime.now();
                       String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
                       
-                      // TODO this is not working right for Android, so I should just let the user choose where it saves to instead. Will have to test on Windows
-                      final String? downloads = (await getDownloadsDirectory())?.path;
-                      String path = '$downloads';
-
+                      // TODO test for Android and Windows
+                      // TODO add a way to choose and save to a default file path.
+                      // TODO might need to request permissions for above on Android.
+                      String? dir = await FilePicker.platform.getDirectoryPath();
+                      String selectedDir = '$dir';
+                      
                       await screenshotController.captureAndSave(
-                        path,
+                        selectedDir,
                         fileName: fileName
                       );
                 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("QR Code saved to $path successfully!")),
+                        SnackBar(content: Text("QR Code saved to $selectedDir successfully!")),
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
