@@ -265,7 +265,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   }, 
                 ),
-                // TODO add button for saving QRcode text to a list (list has to save on device).
               ],
             ),
           ],
