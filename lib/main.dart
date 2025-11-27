@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart'; // https://pub.dev/packages/path_provider
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
 import 'package:screenshot/screenshot.dart'; // https://pub.dev/packages/screenshot/install
 
@@ -18,8 +18,6 @@ class QrMaker extends StatelessWidget {
     return MaterialApp(
       title: 'QR Maker',
       theme: ThemeData(
-        // TODO colors should be set based on device's light / dark mode setting
-        // https://medium.com/@vignesh7056/implementing-light-dark-and-auto-themes-in-flutter-a-complete-cross-platform-guide-7f96a307d4d6
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       darkTheme: ThemeData.dark(),
@@ -40,11 +38,13 @@ class _MyHomePageState extends State<MyHomePage> {
   // QR Code Generation
   String qrData = '';
   bool overCharLimit = false;
+  List<String> qrList = [];
 
   // Image Selection
   String imgDirectory = '';
 
   // Options
+  String selectedOption = 'text';
   bool isGapless = true;
   bool useCornerCircles = false;
   bool useDataCircles = false;
@@ -60,8 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // TODO DropdownMenu here, creates entries for any saved qr code links. Should be able to delete
-            
             Screenshot(
               controller: screenshotController,
               
@@ -90,37 +88,69 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             
 
-            TextField(
-              // TODO see if I can add a drop down to this text field
-              controller: _controller,
-              decoration: InputDecoration(
-                label: Text("QR Code Data Field"),
-                border: OutlineInputBorder(),
-                hintText: 'Enter Text to Generate a QR Code',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed: () {
-                    _controller.clear();
+            SegmentedButton(
+              segments: [
+                ButtonSegment(value: 'text', label: Text('Text'), icon: Icon(Icons.keyboard)),
+                ButtonSegment(value: 'select', label: Text('Select'), icon: Icon(Icons.menu)),
+              ], 
 
-                    setState(() {
-                      qrData = '';
-                    });
-                  },
-                )
-              ),
-
-              onChanged: (String text) {
-                if (text.length < 2330) { // 
-                  setState(() {
-                    overCharLimit = false;
-                    qrData = text;
-                  });
-                } else {
-                  setState(() {
-                    overCharLimit = true;
-                  });
-                }
+              selected: {selectedOption},
+              onSelectionChanged: (Set<String> newSelection) {
+                setState(() {
+                  selectedOption = newSelection.first;
+                });
               },
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      label: Text("QR Code Data Field"),
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter Text to Generate a QR Code',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          _controller.clear();
+                  
+                          setState(() {
+                            qrData = '';
+                          });
+                        },
+                      )
+                    ),
+                  
+                    onChanged: (String text) {
+                      if (text.length < 2330) { // 
+                        setState(() {
+                          overCharLimit = false;
+                          qrData = text;
+                        });
+                      } else {
+                        setState(() {
+                          overCharLimit = true;
+                        });
+                      }
+                    },
+                  ),
+                ),
+
+                ElevatedButton(
+                  child: Icon(Icons.save),
+
+                  onPressed: () {
+                    setState(() {
+                      if (qrData != '') {
+                        qrList.add(qrData);
+                      }
+                      qrList.sort();
+                    });
+                  }, 
+                ),
+              ],
             ),
             
             Column( // Configuration Checkboxes
@@ -179,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  child: Text('Select Image'),
+                  child: Text('Insert Image'),
 
                   onPressed: () async {
                     final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
@@ -207,8 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (!kIsWeb)
-                  ElevatedButton(
+                ElevatedButton(
                   child: Text('Save QR Code as Image'),
                 
                   onPressed: () async {
@@ -217,11 +246,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       String path = '$downloads';
                 
                       DateTime now = DateTime.now();
-                
-                      await screenshotController.captureAndSave(
-                        path,
-                        fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
-                      );
+                      
+                      if (!kIsWeb) {
+                        await screenshotController.captureAndSave(
+                          path,
+                          fileName: 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png'
+                        );
+                      }
                 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("QR Code saved successfully!")),
@@ -233,7 +264,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   }, 
                 ),
-
                 // TODO add button for saving QRcode text to a list (list has to save on device).
               ],
             ),
