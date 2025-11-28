@@ -44,6 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // QR Code Generation
   String qrData = '';
   bool overCharLimit = false;
+
+  // TODO this needs to save in-between sessions.
   List<String> qrList = [];
 
   // Image Selection
@@ -171,7 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             qrData = value;
                           });
 
-                          // https://stackoverflow.com/questions/51127241/how-do-you-change-the-value-inside-of-a-textfield-flutter
                           _controller.value = _controller.value.copyWith(
                             text: value,
                             selection: TextSelection.collapsed(offset: value.length)
