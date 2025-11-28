@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'; // https://pub.dev/packages/path_provider
+import 'package:permission_handler/permission_handler.dart'; // https://pub.dev/packages/permission_handler
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
 import 'package:screenshot/screenshot.dart'; // https://pub.dev/packages/screenshot/install
 
@@ -247,22 +248,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 
                   onPressed: () async {
                     try {
+                      if ((Platform.isAndroid || Platform.isIOS)) {
+                        PermissionStatus storagePermissionStat = await Permission.storage.status;
+                        
+                        if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
+
+                        if (storagePermissionStat.isPermanentlyDenied) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
+                          );
+
+                          return;
+                        } else if (storagePermissionStat.isDenied) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
+                          );
+
+                          return;
+                        }
+                      }
+
                       DateTime now = DateTime.now();
                       String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
                       
-                      // https://pub.dev/packages/permission_handler
-                      // TODO Save button should ask for permissions if they are not yet approved (if platform is android or iOS)
                       // "runtime permissions"
                       String? dir = await FilePicker.platform.getDirectoryPath();
-                      String selectedDir = '$dir';
+
+                      if (dir == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('No directory selected.'))
+                        );
+
+                        return;
+                      }
                       
                       await screenshotController.captureAndSave(
-                        selectedDir,
+                        dir,
                         fileName: fileName
                       );
                 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("QR Code saved to $selectedDir successfully!")),
+                        SnackBar(content: Text("QR Code saved to $dir successfully!")),
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
