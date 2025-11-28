@@ -10,10 +10,6 @@ void main() {
   runApp(const QrMaker());
 }
 
-// TODO advanced options:
-// TODO File naming box (clear button as well)
-// TODO set deafult file path with button, display the file path, have option to change it. Display a "Save to default" button if it is set.
-
 // TODO check pubspec.yaml, remove any unused packages.
 
 class QrMaker extends StatelessWidget {
@@ -316,6 +312,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       //     return;
                       //   }
                       // }
+
+                      // TODO this needs to work on Android
 
                       DateTime now = DateTime.now();
                       String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
