@@ -23,7 +23,7 @@ class QrMaker extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'QR Maker',
-      theme: ThemeData(
+      theme: ThemeData( // TODO if possible get material you chosen color from android, else use a default (amber?)
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       darkTheme: ThemeData.dark(),
@@ -254,15 +254,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
 
                         if (storagePermissionStat.isPermanentlyDenied) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
-                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
+                            );
+                          }
 
                           return;
                         } else if (storagePermissionStat.isDenied) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
-                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
+                            );
+                          }
 
                           return;
                         }
@@ -275,9 +279,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       String? dir = await FilePicker.platform.getDirectoryPath();
 
                       if (dir == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('No directory selected.'))
-                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('No directory selected.'))
+                          );
+                        }
 
                         return;
                       }
@@ -287,13 +293,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         fileName: fileName
                       );
                 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("QR Code saved to $dir successfully!")),
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("QR Code saved to $dir successfully!")),
+                        );
+                      }
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Failed to save QR code: $e"))
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Failed to save QR code: $e"))
+                        );
+                      }
                     }
                   }, 
                 ),
