@@ -108,56 +108,64 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
 
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      label: Text("QR Code Data Field"),
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter Text to Generate a QR Code',
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          _controller.clear();
-                  
+            if (selectedOption == 'text')
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        label: Text("QR Code Data Field"),
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter Text to Generate a QR Code',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            _controller.clear();
+                    
+                            setState(() {
+                              qrData = '';
+                            });
+                          },
+                        )
+                      ),
+                    
+                      onChanged: (String text) {
+                        if (text.length < 2330) { // 
                           setState(() {
-                            qrData = '';
+                            overCharLimit = false;
+                            qrData = text;
                           });
-                        },
-                      )
+                        } else {
+                          setState(() {
+                            overCharLimit = true;
+                          });
+                        }
+                      },
                     ),
-                  
-                    onChanged: (String text) {
-                      if (text.length < 2330) { // 
-                        setState(() {
-                          overCharLimit = false;
-                          qrData = text;
-                        });
-                      } else {
-                        setState(() {
-                          overCharLimit = true;
-                        });
-                      }
-                    },
                   ),
-                ),
 
-                ElevatedButton(
-                  child: Icon(Icons.save),
+                  ElevatedButton(
+                    child: Icon(Icons.save),
 
-                  onPressed: () {
-                    setState(() {
-                      if (qrData != '') {
-                        qrList.add(qrData);
-                      }
-                      qrList.sort();
-                    });
-                  }, 
-                ),
-              ],
-            ),
+                    onPressed: () {
+                      setState(() {
+                        if (qrData != '') {
+                          qrList.add(qrData);
+                        }
+                        qrList.sort();
+                      });
+                    }, 
+                  ),
+                ],
+              ),
+            
+            if (selectedOption == 'select')
+              DropdownMenu(
+                dropdownMenuEntries: [
+                  DropdownMenuEntry(value: 'value', label: 'text')
+                ]
+              ),
             
             Column( // Configuration Checkboxes
               children: [
@@ -248,29 +256,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 
                   onPressed: () async {
                     try {
-                      if ((Platform.isAndroid || Platform.isIOS)) {
-                        PermissionStatus storagePermissionStat = await Permission.storage.status;
+                      // if ((Platform.isAndroid || Platform.isIOS)) {
+                      //   PermissionStatus storagePermissionStat = await Permission.storage.status;
                         
-                        if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
+                      //   if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
 
-                        if (storagePermissionStat.isPermanentlyDenied) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
-                            );
-                          }
+                      //   if (storagePermissionStat.isPermanentlyDenied) {
+                      //     if (context.mounted) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
+                      //       );
+                      //     }
 
-                          return;
-                        } else if (storagePermissionStat.isDenied) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
-                            );
-                          }
+                      //     return;
+                      //   } else if (storagePermissionStat.isDenied) {
+                      //     if (context.mounted) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
+                      //       );
+                      //     }
 
-                          return;
-                        }
-                      }
+                      //     return;
+                      //   }
+                      // }
 
                       DateTime now = DateTime.now();
                       String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
