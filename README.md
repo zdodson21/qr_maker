@@ -4,15 +4,11 @@ Simple QR Code Maker Application
 
 ## Platforms & Features
 
-The following platforms are supported:
+The following platforms are expected to be supported:
 
 * Android
 * Linux
 * Windows
-* iOS\*
-* macOS\*
-
-\* iOS and macOS should also be supported, but are untested and deemed "unstable".
 
 Core Features:
 
