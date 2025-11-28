@@ -142,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           });
                         }
                       },
+                      enableSuggestions: false,
                     ),
                   ),
 
@@ -169,6 +170,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           setState(() {
                             qrData = value;
                           });
+
+                          // https://stackoverflow.com/questions/51127241/how-do-you-change-the-value-inside-of-a-textfield-flutter
+                          _controller.value = _controller.value.copyWith(
+                            text: value,
+                            selection: TextSelection.collapsed(offset: value.length)
+                          );
                         }
                       },
                     
