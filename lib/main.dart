@@ -161,10 +161,39 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             
             if (selectedOption == 'select')
-              DropdownMenu(
-                dropdownMenuEntries: [
-                  DropdownMenuEntry(value: 'value', label: 'text')
-                ]
+              Row(
+                children: [
+                  Expanded(child: DropdownMenu(
+                      onSelected: (value) {
+                        if (value != null) {
+                          setState(() {
+                            qrData = value;
+                          });
+                        }
+                      },
+                    
+                      dropdownMenuEntries: qrList.map((item) {
+                        return DropdownMenuEntry(
+                          value: item, 
+                          label: item,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  
+                  ElevatedButton(
+                    child: Icon(Icons.delete),
+
+                    onPressed: () {
+                      if (qrList.contains(qrData)) {
+                        setState(() {
+                          qrList.remove(qrData);
+                        });
+                        qrList.sort();
+                      }
+                    }, 
+                  ),
+                ],
               ),
             
             Column( // Configuration Checkboxes
