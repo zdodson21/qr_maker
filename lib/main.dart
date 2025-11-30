@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dynamic_color/dynamic_color.dart'; // https://pub.dev/packages/dynamic_color
 import 'package:file_picker/file_picker.dart'; // https://pub.dev/packages/file_picker
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart'; // https://pub.dev/packages/path_provider
@@ -20,20 +21,23 @@ class QrMaker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QR Maker',
-      theme: ThemeData( // TODO if possible get material you chosen color from android, else use a default (amber?)
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.amber,
-          brightness: Brightness.dark,
-        ),
-      ),
-      themeMode: ThemeMode.system,
-      home: const MyHomePage(),
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        final ColorScheme fallbackLight = ColorScheme.fromSeed(seedColor: Colors.amber, brightness: Brightness.light);
+        final ColorScheme fallbackDark = ColorScheme.fromSeed(seedColor: Colors.amber, brightness: Brightness.dark);
+        
+        return MaterialApp(
+          title: 'QR Maker',
+          theme: ThemeData(
+            colorScheme: lightDynamic ?? fallbackLight
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkDynamic ?? fallbackDark
+          ),
+          themeMode: ThemeMode.system,
+          home: const MyHomePage(),
+        );
+      },
     );
   }
 }
