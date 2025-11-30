@@ -23,9 +23,15 @@ class QrMaker extends StatelessWidget {
     return MaterialApp(
       title: 'QR Maker',
       theme: ThemeData( // TODO if possible get material you chosen color from android, else use a default (amber?)
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
+        brightness: Brightness.light,
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.amber,
+          brightness: Brightness.dark,
+        ),
+      ),
       themeMode: ThemeMode.system,
       home: const MyHomePage(),
     );
