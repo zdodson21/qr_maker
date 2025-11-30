@@ -12,8 +12,8 @@ void main() {
   runApp(const QrMaker());
 }
 
-// TODO ensure app works on Android, see about Windows support. May not need to do anything there.
-// TODO ensure UI looks good.
+// TODO ensure Android works
+// TODO ensure Windows works
 // TODO check pubspec.yaml, remove any unused packages.
 
 class QrMaker extends StatelessWidget {
