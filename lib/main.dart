@@ -136,6 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _snackBarMessage(String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message))
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -240,7 +248,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.save),
                                       
                         onPressed: () {
-                          _addQrListItem(qrData);
+                          try {
+                            if (qrData != '') {
+                              _addQrListItem(qrData);
+                              _snackBarMessage('Saved QR code to list!');
+                            } else {
+                              _snackBarMessage('Will not save blank string to list!');
+                            }
+                          } catch (e) {
+                            _snackBarMessage('Failed to save qr code to list: $e');
+                          }
                         }, 
                       ),
                     ),
@@ -421,11 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         String? dir = await FilePicker.platform.getDirectoryPath();
               
                         if (dir == null) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('No directory selected.'))
-                            );
-                          }
+                          _snackBarMessage('No directory selected');
               
                           return;
                         }
@@ -435,17 +448,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           fileName: fileName
                         );
                   
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("QR Code saved to $dir successfully!")),
-                          );
-                        }
+                        _snackBarMessage('QR code saved to $dir successfully!');
                       } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Failed to save QR code: $e"))
-                          );
-                        }
+                        _snackBarMessage('Failed to save QR code: $e');
                       }
                     }, 
                   ),
