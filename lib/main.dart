@@ -23,16 +23,25 @@ class QrMaker extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        final ColorScheme fallbackLight = ColorScheme.fromSeed(seedColor: Colors.amber, brightness: Brightness.light);
-        final ColorScheme fallbackDark = ColorScheme.fromSeed(seedColor: Colors.amber, brightness: Brightness.dark);
+        final ColorScheme fallbackLight = ColorScheme.fromSeed(
+          seedColor: Colors.amber, 
+          brightness: Brightness.light
+        );
+
+        final ColorScheme fallbackDark = ColorScheme.fromSeed(
+          seedColor: Colors.amber, 
+          brightness: Brightness.dark,
+        );
         
         return MaterialApp(
           title: 'QR Maker',
           theme: ThemeData(
-            colorScheme: lightDynamic ?? fallbackLight
+            colorScheme: lightDynamic ?? fallbackLight,
+            scaffoldBackgroundColor: Colors.white,
           ),
           darkTheme: ThemeData(
-            colorScheme: darkDynamic ?? fallbackDark
+            colorScheme: darkDynamic ?? fallbackDark,
+            scaffoldBackgroundColor: Colors.black
           ),
           themeMode: ThemeMode.system,
           home: const MyHomePage(),
@@ -188,46 +197,52 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          label: Text("QR Code Data Field"),
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Text to Generate a QR Code',
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.clear),
-                            onPressed: () {
-                              _controller.clear();
-                      
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            label: Text("QR Code Data Field"),
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter Text to Generate a QR Code',
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                _controller.clear();
+                        
+                                setState(() {
+                                  qrData = '';
+                                });
+                              },
+                            )
+                          ),
+                        
+                          onChanged: (String text) {
+                            if (text.length < 2330) { // 
                               setState(() {
-                                qrData = '';
+                                overCharLimit = false;
+                                qrData = text;
                               });
-                            },
-                          )
+                            } else {
+                              setState(() {
+                                overCharLimit = true;
+                              });
+                            }
+                          },
+                          enableSuggestions: false,
                         ),
-                      
-                        onChanged: (String text) {
-                          if (text.length < 2330) { // 
-                            setState(() {
-                              overCharLimit = false;
-                              qrData = text;
-                            });
-                          } else {
-                            setState(() {
-                              overCharLimit = true;
-                            });
-                          }
-                        },
-                        enableSuggestions: false,
                       ),
                     ),
                 
-                    ElevatedButton(
-                      child: Icon(Icons.save),
-                
-                      onPressed: () {
-                        _addQrListItem(qrData);
-                      }, 
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ElevatedButton(
+                        child: Icon(Icons.save),
+                                      
+                        onPressed: () {
+                          _addQrListItem(qrData);
+                        }, 
+                      ),
                     ),
                   ],
                 ),
@@ -237,25 +252,26 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: DropdownMenu(
-                        onSelected: (value) {
-                          if (value != null) {
-                            setState(() {
-                              qrData = value;
-                            });
-                
-                            _setTextField(value);
-                          }
-                        },
-                      
-                        dropdownMenuEntries: qrList.map((item) {
-                          return DropdownMenuEntry(
-                            value: item, 
-                            label: item,
-                          );
-                        }).toList(),
-                      ),
+                    DropdownMenu(
+                      onSelected: (value) {
+                        if (value != null) {
+                          setState(() {
+                            qrData = value;
+                          });
+              
+                          _setTextField(value);
+                        }
+                      },
+                    
+                      dropdownMenuEntries: qrList.map((item) {
+                        return DropdownMenuEntry(
+                          value: item, 
+                          label: item,
+                        );
+                      }).toList(),
+                      requestFocusOnTap: false,
                     ),
                     
                     ElevatedButton(
@@ -329,28 +345,34 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Row( // Image Buttons
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    child: Text('Insert Image'),
-              
-                    onPressed: () async {
-                      final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
-              
-                      if (result != null) {
-                        setState(() {
-                          imgDirectory = result.files.single.path!;
-                        });
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6.0),
+                    child: ElevatedButton(
+                      child: Text('Insert Image'),
+                                  
+                      onPressed: () async {
+                        final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
+                                  
+                        if (result != null) {
+                          setState(() {
+                            imgDirectory = result.files.single.path!;
+                          });
+                        }
+                      },
+                    ),
                   ),
               
-                  ElevatedButton(
-                    child: Text('Clear Image'),
-                    
-                    onPressed: () {
-                      setState(() {
-                        imgDirectory = '';
-                      });
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6.0),
+                    child: ElevatedButton(
+                      child: Text('Clear Image'),
+                      
+                      onPressed: () {
+                        setState(() {
+                          imgDirectory = '';
+                        });
+                      },
+                    ),
                   )
                 ],
               ),
