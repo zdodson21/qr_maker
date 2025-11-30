@@ -293,12 +293,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     
-                    ElevatedButton(
-                      child: Icon(Icons.delete),
-                
-                      onPressed: () {
-                        _removeQrListItem(qrData);
-                      }, 
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ElevatedButton(
+                        child: Icon(Icons.delete),
+                                      
+                        onPressed: () {
+                          _removeQrListItem(qrData);
+                        }, 
+                      ),
                     ),
                   ],
                 ),
