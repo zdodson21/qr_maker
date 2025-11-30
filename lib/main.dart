@@ -5,11 +5,14 @@ import 'package:path_provider/path_provider.dart'; // https://pub.dev/packages/p
 import 'package:permission_handler/permission_handler.dart'; // https://pub.dev/packages/permission_handler
 import 'package:qr_flutter/qr_flutter.dart'; // https://pub.dev/packages/qr_flutter
 import 'package:screenshot/screenshot.dart'; // https://pub.dev/packages/screenshot/install
+import 'package:shared_preferences/shared_preferences.dart'; // https://pub.dev/packages/shared_preferences/install
 
 void main() {
   runApp(const QrMaker());
 }
 
+// TODO ensure app works on Android, see about Windows support. May not need to do anything there.
+// TODO ensure UI looks good.
 // TODO check pubspec.yaml, remove any unused packages.
 
 class QrMaker extends StatelessWidget {
@@ -41,8 +44,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String qrData = '';
   bool overCharLimit = false;
 
-  // TODO this needs to save in-between sessions.
   List<String> qrList = [];
+
+  @override
+  void initState() {
+    _getQrList();
+    super.initState();
+  }
 
   // Image Selection
   String imgDirectory = '';
@@ -56,6 +64,54 @@ class _MyHomePageState extends State<MyHomePage> {
   // Controllers 
   ScreenshotController screenshotController = ScreenshotController();
   final TextEditingController _controller = TextEditingController();
+
+  void _getQrList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? list = prefs.getStringList('qr_list');
+
+    if (list != null) {
+      setState(() {
+        qrList = list;
+      });
+    }
+  }
+
+  void _addQrListItem(String newItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (newItem != '') {
+      setState(() {
+        qrList.add(newItem);
+        qrList.sort();
+      });
+    }
+
+    await prefs.setStringList('qr_list', qrList);
+  }
+
+  void _removeQrListItem(String removableItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (qrList.contains(removableItem)) {
+      setState(() {
+        qrList.remove(removableItem);
+        qrList.sort();
+
+        qrData = '';
+
+        _setTextField(qrData);
+      });
+
+      await prefs.setStringList('qr_list', qrList);
+    }
+  }
+
+  void _setTextField(String value) {
+    _controller.value = _controller.value.copyWith(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length)
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,12 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Icon(Icons.save),
 
                     onPressed: () {
-                      setState(() {
-                        if (qrData != '') {
-                          qrList.add(qrData);
-                        }
-                        qrList.sort();
-                      });
+                      _addQrListItem(qrData);
                     }, 
                   ),
                 ],
@@ -169,10 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             qrData = value;
                           });
 
-                          _controller.value = _controller.value.copyWith(
-                            text: value,
-                            selection: TextSelection.collapsed(offset: value.length)
-                          );
+                          _setTextField(value);
                         }
                       },
                     
@@ -189,12 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Icon(Icons.delete),
 
                     onPressed: () {
-                      if (qrList.contains(qrData)) {
-                        setState(() {
-                          qrList.remove(qrData);
-                        });
-                        qrList.sort();
-                      }
+                      _removeQrListItem(qrData);
                     }, 
                   ),
                 ],
@@ -313,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       //   }
                       // }
 
-                      // TODO this needs to work on Android
+                      // TODO this needs to work on Android, currently getting error
 
                       DateTime now = DateTime.now();
                       String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
