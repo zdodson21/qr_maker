@@ -124,280 +124,301 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Screenshot(
-              controller: screenshotController,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Screenshot(
+                controller: screenshotController,
+                
+                child: 
+                  QrImageView(
+                    // Data
+                    data: qrData,
+                    version: QrVersions.auto,
+                    errorCorrectionLevel: QrErrorCorrectLevel.H,
+                    embeddedImage: FileImage(File(imgDirectory)),
+                    semanticsLabel: 'Q R code for: $qrData',
               
-              child: 
-                QrImageView(
-                  // Data
-                  data: qrData,
-                  version: QrVersions.auto,
-                  errorCorrectionLevel: QrErrorCorrectLevel.H,
-                  embeddedImage: FileImage(File(imgDirectory)),
-                  semanticsLabel: 'Q R code for: $qrData',
-
-                  // Styles
-                  size: 320,
-                  gapless: isGapless,
-                  backgroundColor: Colors.white,
-                  eyeStyle: QrEyeStyle(
-                    color: Colors.black,
-                    eyeShape: useCornerCircles ? QrEyeShape.circle : QrEyeShape.square,
-                  ),
-                  dataModuleStyle: QrDataModuleStyle(
-                    color: Colors.black,
-                    dataModuleShape: useDataCircles ? QrDataModuleShape.circle : QrDataModuleShape.square
-                  ),
-                ), 
+                    // Styles
+                    size: 320,
+                    gapless: isGapless,
+                    backgroundColor: Colors.white,
+                    eyeStyle: QrEyeStyle(
+                      color: Colors.black,
+                      eyeShape: useCornerCircles ? QrEyeShape.circle : QrEyeShape.square,
+                    ),
+                    dataModuleStyle: QrDataModuleStyle(
+                      color: Colors.black,
+                      dataModuleShape: useDataCircles ? QrDataModuleShape.circle : QrDataModuleShape.square
+                    ),
+                  ), 
+              ),
             ),
             
 
-            SegmentedButton(
-              segments: [
-                ButtonSegment(value: 'text', label: Text('Text'), icon: Icon(Icons.keyboard)),
-                ButtonSegment(value: 'select', label: Text('Select'), icon: Icon(Icons.menu)),
-              ], 
-
-              selected: {selectedOption},
-              onSelectionChanged: (Set<String> newSelection) {
-                setState(() {
-                  selectedOption = newSelection.first;
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SegmentedButton(
+                segments: [
+                  ButtonSegment(value: 'text', label: Text('Text'), icon: Icon(Icons.keyboard)),
+                  ButtonSegment(value: 'select', label: Text('Select'), icon: Icon(Icons.menu)),
+                ], 
+              
+                selected: {selectedOption},
+                onSelectionChanged: (Set<String> newSelection) {
+                  setState(() {
+                    selectedOption = newSelection.first;
+                  });
+                },
+              ),
             ),
 
             if (selectedOption == 'text')
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        label: Text("QR Code Data Field"),
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter Text to Generate a QR Code',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: () {
-                            _controller.clear();
-                    
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          label: Text("QR Code Data Field"),
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter Text to Generate a QR Code',
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: () {
+                              _controller.clear();
+                      
+                              setState(() {
+                                qrData = '';
+                              });
+                            },
+                          )
+                        ),
+                      
+                        onChanged: (String text) {
+                          if (text.length < 2330) { // 
                             setState(() {
-                              qrData = '';
+                              overCharLimit = false;
+                              qrData = text;
                             });
-                          },
-                        )
+                          } else {
+                            setState(() {
+                              overCharLimit = true;
+                            });
+                          }
+                        },
+                        enableSuggestions: false,
                       ),
-                    
-                      onChanged: (String text) {
-                        if (text.length < 2330) { // 
-                          setState(() {
-                            overCharLimit = false;
-                            qrData = text;
-                          });
-                        } else {
-                          setState(() {
-                            overCharLimit = true;
-                          });
-                        }
-                      },
-                      enableSuggestions: false,
                     ),
-                  ),
-
-                  ElevatedButton(
-                    child: Icon(Icons.save),
-
-                    onPressed: () {
-                      _addQrListItem(qrData);
-                    }, 
-                  ),
-                ],
+                
+                    ElevatedButton(
+                      child: Icon(Icons.save),
+                
+                      onPressed: () {
+                        _addQrListItem(qrData);
+                      }, 
+                    ),
+                  ],
+                ),
               ),
             
             if (selectedOption == 'select')
-              Row(
-                children: [
-                  Expanded(child: DropdownMenu(
-                      onSelected: (value) {
-                        if (value != null) {
-                          setState(() {
-                            qrData = value;
-                          });
-
-                          _setTextField(value);
-                        }
-                      },
-                    
-                      dropdownMenuEntries: qrList.map((item) {
-                        return DropdownMenuEntry(
-                          value: item, 
-                          label: item,
-                        );
-                      }).toList(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(child: DropdownMenu(
+                        onSelected: (value) {
+                          if (value != null) {
+                            setState(() {
+                              qrData = value;
+                            });
+                
+                            _setTextField(value);
+                          }
+                        },
+                      
+                        dropdownMenuEntries: qrList.map((item) {
+                          return DropdownMenuEntry(
+                            value: item, 
+                            label: item,
+                          );
+                        }).toList(),
+                      ),
                     ),
+                    
+                    ElevatedButton(
+                      child: Icon(Icons.delete),
+                
+                      onPressed: () {
+                        _removeQrListItem(qrData);
+                      }, 
+                    ),
+                  ],
+                ),
+              ),
+            
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(// Configuration Checkboxes
+                children: [
+                  CheckboxListTile(
+                    title: Text("Gapless"),
+                    value: isGapless, 
+                    selected: isGapless,
+                    dense: true,
+                    controlAffinity: ListTileControlAffinity.leading,
+              
+                    onChanged: (bool? checked) {
+                      if (checked != null) {
+                        setState(() {
+                          isGapless = checked;
+                        });
+                      }
+                    },
                   ),
-                  
-                  ElevatedButton(
-                    child: Icon(Icons.delete),
+              
+                  CheckboxListTile(
+                    title: Text("Use Circles at Corners"),
+                    value: useCornerCircles,
+                    selected: useCornerCircles,
+                    dense: true,
+                    controlAffinity: ListTileControlAffinity.leading,
+              
+                    onChanged:(bool? checked) {
+                      if (checked != null) {
+                        setState(() {
+                          useCornerCircles = checked;
+                        });
+                      }
+                    },
+                  ),
+              
+                  CheckboxListTile(
+                    title: Text("Use Circles for Data"),
+                    value: useDataCircles, 
+                    selected: useCornerCircles,
+                    dense: true,
+                    controlAffinity: ListTileControlAffinity.leading,
+              
+                    onChanged: (bool? checked) {
+                      if (checked != null) {
+                        setState(() {
+                          useDataCircles = checked;
+                        });
+                      }
+                    }
+                  ),
+                ]
+              ),
+            ),
 
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row( // Image Buttons
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    child: Text('Insert Image'),
+              
+                    onPressed: () async {
+                      final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
+              
+                      if (result != null) {
+                        setState(() {
+                          imgDirectory = result.files.single.path!;
+                        });
+                      }
+                    },
+                  ),
+              
+                  ElevatedButton(
+                    child: Text('Clear Image'),
+                    
                     onPressed: () {
-                      _removeQrListItem(qrData);
+                      setState(() {
+                        imgDirectory = '';
+                      });
+                    },
+                  )
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    child: Text('Save QR Code as Image'),
+                  
+                    onPressed: () async {
+                      try {
+                        // if ((Platform.isAndroid || Platform.isIOS)) {
+                        //   PermissionStatus storagePermissionStat = await Permission.storage.status;
+                          
+                        //   if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
+              
+                        //   if (storagePermissionStat.isPermanentlyDenied) {
+                        //     if (context.mounted) {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
+                        //       );
+                        //     }
+              
+                        //     return;
+                        //   } else if (storagePermissionStat.isDenied) {
+                        //     if (context.mounted) {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
+                        //       );
+                        //     }
+              
+                        //     return;
+                        //   }
+                        // }
+              
+                        // TODO this needs to work on Android, currently getting error
+              
+                        DateTime now = DateTime.now();
+                        String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
+                        
+                        // "runtime permissions"
+                        String? dir = await FilePicker.platform.getDirectoryPath();
+              
+                        if (dir == null) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('No directory selected.'))
+                            );
+                          }
+              
+                          return;
+                        }
+                        
+                        await screenshotController.captureAndSave(
+                          dir,
+                          fileName: fileName
+                        );
+                  
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("QR Code saved to $dir successfully!")),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Failed to save QR code: $e"))
+                          );
+                        }
+                      }
                     }, 
                   ),
                 ],
               ),
-            
-            Column( // Configuration Checkboxes
-              children: [
-                CheckboxListTile(
-                  title: Text("Gapless"),
-                  value: isGapless, 
-                  selected: isGapless,
-                  dense: true,
-                  controlAffinity: ListTileControlAffinity.leading,
-
-                  onChanged: (bool? checked) {
-                    if (checked != null) {
-                      setState(() {
-                        isGapless = checked;
-                      });
-                    }
-                  },
-                ),
-
-                CheckboxListTile(
-                  title: Text("Use Circles at Corners"),
-                  value: useCornerCircles,
-                  selected: useCornerCircles,
-                  dense: true,
-                  controlAffinity: ListTileControlAffinity.leading,
-
-                  onChanged:(bool? checked) {
-                    if (checked != null) {
-                      setState(() {
-                        useCornerCircles = checked;
-                      });
-                    }
-                  },
-                ),
-
-                CheckboxListTile(
-                  title: Text("Use Circles for Data"),
-                  value: useDataCircles, 
-                  selected: useCornerCircles,
-                  dense: true,
-                  controlAffinity: ListTileControlAffinity.leading,
-
-                  onChanged: (bool? checked) {
-                    if (checked != null) {
-                      setState(() {
-                        useDataCircles = checked;
-                      });
-                    }
-                  }
-                ),
-              ]
-            ),
-
-            Row( // Image Buttons
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  child: Text('Insert Image'),
-
-                  onPressed: () async {
-                    final FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image,);
-
-                    if (result != null) {
-                      setState(() {
-                        imgDirectory = result.files.single.path!;
-                      });
-                    }
-                  },
-                ),
-
-                ElevatedButton(
-                  child: Text('Clear Image'),
-                  
-                  onPressed: () {
-                    setState(() {
-                      imgDirectory = '';
-                    });
-                  },
-                )
-              ],
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  child: Text('Save QR Code as Image'),
-                
-                  onPressed: () async {
-                    try {
-                      // if ((Platform.isAndroid || Platform.isIOS)) {
-                      //   PermissionStatus storagePermissionStat = await Permission.storage.status;
-                        
-                      //   if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
-
-                      //   if (storagePermissionStat.isPermanentlyDenied) {
-                      //     if (context.mounted) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
-                      //       );
-                      //     }
-
-                      //     return;
-                      //   } else if (storagePermissionStat.isDenied) {
-                      //     if (context.mounted) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
-                      //       );
-                      //     }
-
-                      //     return;
-                      //   }
-                      // }
-
-                      // TODO this needs to work on Android, currently getting error
-
-                      DateTime now = DateTime.now();
-                      String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
-                      
-                      // "runtime permissions"
-                      String? dir = await FilePicker.platform.getDirectoryPath();
-
-                      if (dir == null) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No directory selected.'))
-                          );
-                        }
-
-                        return;
-                      }
-                      
-                      await screenshotController.captureAndSave(
-                        dir,
-                        fileName: fileName
-                      );
-                
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("QR Code saved to $dir successfully!")),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Failed to save QR code: $e"))
-                        );
-                      }
-                    }
-                  }, 
-                ),
-              ],
             ),
           ],
         ),
