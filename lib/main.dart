@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScreenshotController screenshotController = ScreenshotController();
   final TextEditingController _controller = TextEditingController();
 
+  /// Gets QR code list data using SharedPreferences
   void _getQrList() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? list = prefs.getStringList('qr_list');
@@ -76,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  /// Adds item to QR code list
   void _addQrListItem(String newItem) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -89,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await prefs.setStringList('qr_list', qrList);
   }
 
+  /// Removes item from QR code list
   void _removeQrListItem(String removableItem) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -106,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  /// Sets text field based on provided value
   void _setTextField(String value) {
     _controller.value = _controller.value.copyWith(
       text: value,
