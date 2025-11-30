@@ -12,7 +12,6 @@ void main() {
   runApp(const QrMaker());
 }
 
-// TODO ensure Android works
 // TODO ensure Windows works
 // TODO check pubspec.yaml, remove any unused packages.
 
@@ -271,24 +270,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DropdownMenu(
-                      onSelected: (value) {
-                        if (value != null) {
-                          setState(() {
-                            qrData = value;
-                          });
-              
-                          _setTextField(value);
-                        }
-                      },
-                    
-                      dropdownMenuEntries: qrList.map((item) {
-                        return DropdownMenuEntry(
-                          value: item, 
-                          label: item,
-                        );
-                      }).toList(),
-                      requestFocusOnTap: false,
+                    SizedBox(
+                      width: 200,
+                      child: DropdownMenu(
+                        onSelected: (value) {
+                          if (value != null) {
+                            setState(() {
+                              qrData = value;
+                            });
+                                    
+                            _setTextField(value);
+                          }
+                        },
+                      
+                        dropdownMenuEntries: qrList.map((item) {
+                          return DropdownMenuEntry(
+                            value: item, 
+                            label: item,
+                          );
+                        }).toList(),
+                        requestFocusOnTap: false,
+                      ),
                     ),
                     
                     ElevatedButton(
@@ -395,68 +397,45 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    child: Text('Save QR Code as Image'),
-                  
-                    onPressed: () async {
-                      try {
-                        // if ((Platform.isAndroid || Platform.isIOS)) {
-                        //   PermissionStatus storagePermissionStat = await Permission.storage.status;
+            if (!Platform.isAndroid)
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      child: Text('Save QR Code as Image'),
+                    
+                      onPressed: () async {
+                        try {
+                          // TODO I think file permission is needed, but cannot find any reliable sources for how to do this.
+                
+                          DateTime now = DateTime.now();
+                          String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
                           
-                        //   if (storagePermissionStat.isDenied) await Permission.storage.request(); // Request permission
-              
-                        //   if (storagePermissionStat.isPermanentlyDenied) {
-                        //     if (context.mounted) {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         SnackBar(content: Text('Storage permission permanently denied. Please change storage permission. in your settings app.'))
-                        //       );
-                        //     }
-              
-                        //     return;
-                        //   } else if (storagePermissionStat.isDenied) {
-                        //     if (context.mounted) {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         SnackBar(content: Text('Storage permission denied. Please grant storage permission.'))
-                        //       );
-                        //     }
-              
-                        //     return;
-                        //   }
-                        // }
-              
-                        // TODO this needs to work on Android, currently getting error
-              
-                        DateTime now = DateTime.now();
-                        String fileName = 'QRMaker-${now.month}-${now.day}-${now.year}-${now.hour}:${now.minute}:${now.second}.png';
-                        
-                        // "runtime permissions"
-                        String? dir = await FilePicker.platform.getDirectoryPath();
-              
-                        if (dir == null) {
-                          _snackBarMessage('No directory selected');
-              
-                          return;
+                          // "runtime permissions"
+                          String? dir = await FilePicker.platform.getDirectoryPath();
+                
+                          if (dir == null) {
+                            _snackBarMessage('No directory selected');
+                
+                            return;
+                          }
+                          
+                          await screenshotController.captureAndSave(
+                            dir,
+                            fileName: fileName
+                          );
+                    
+                          _snackBarMessage('QR code saved to $dir successfully!');
+                        } catch (e) {
+                          _snackBarMessage('Failed to save QR code: $e');
                         }
-                        
-                        await screenshotController.captureAndSave(
-                          dir,
-                          fileName: fileName
-                        );
-                  
-                        _snackBarMessage('QR code saved to $dir successfully!');
-                      } catch (e) {
-                        _snackBarMessage('Failed to save QR code: $e');
-                      }
-                    }, 
-                  ),
-                ],
+                      }, 
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
